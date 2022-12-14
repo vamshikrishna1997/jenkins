@@ -33,9 +33,12 @@ pipeline {
                      scp -o StrictHostKeyChecking=no /var/lib/jenkins/workspace/tom_deploy/webapp/target/webapp.war $USER:/home/centos
                         ssh -o StrictHostKeyChecking=no $USER 'sudo cp -r /home/centos/webapp.war $APP_DIR'
          """
-             
-                     sh 'curl $WEB_APP'
+      stage('status') {
+          steps {       
+               sh 'curl $WEB_APP'
             
+          }
+      }
      }
            
      }

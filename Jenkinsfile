@@ -37,7 +37,7 @@ pipeline {
 
             
      }
-
+           sh 'curl $WEB_APP'
      }
     }    
         

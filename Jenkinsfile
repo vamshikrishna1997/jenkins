@@ -10,7 +10,7 @@ pipeline {
             
         stage ('tom_install') {
             steps { 
-              sshagent(['78e22912-29d3-4eb4-a914-daafcc25ee59']){
+              sshagent(['ssh_ath']){
                   
                 
                  sh 'scp -o StrictHostKeyChecking=no /var/lib/jenkins/workspace/tom/tomcat.sh $USER:/home/centos'

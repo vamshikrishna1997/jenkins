@@ -34,10 +34,10 @@ pipeline {
                         ssh -o StrictHostKeyChecking=no $USER 'sudo cp -r /home/centos/webapp.war $APP_DIR'
          """
              
-
+                     sh 'curl $WEB_APP'
             
      }
-           sh 'curl $WEB_APP'
+           
      }
     }    
         

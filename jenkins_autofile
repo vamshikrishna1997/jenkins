@@ -1,0 +1,44 @@
+pipeline {
+    agent any
+    stages{
+        stage('Clean workspace') {
+            steps {
+                cleanWs()
+            }
+        }
+        stage('checkout') {
+            steps {
+                git branch: 'main', url: '$GIT_URL'
+                sh "ls"
+            }
+}
+        stage('terraform code exe'){
+            steps{
+            withAWS(credentials: 'aws-creds', region: 'ap-south-1') {
+                sh """
+                cd terraform
+                terraform init
+                terraform plan
+                terraform apply -auto-approve
+                sleep 30
+		        sudo terraform output --raw vmpublic_ip >> /etc/ansible/hosts
+                """
+            }}}    
+        stage('ansible commits'){
+            steps{    
+                    sh '''
+                    ansible all -m ping -u ubuntu
+                    ansible-playbook ansible/playbook1.yaml -u ubuntu
+                    cd terraform 
+                    vm_ip=\$(terraform output --raw vmpublic_ip)
+                    curl -i http://\${vm_ip} | head -1
+                    if [ $? -eq 0 ]; then
+                       echo "Web server is launched on \${vm_ip}"
+                    else
+                        echo "Web server is not working. Please debug using logs"
+                    fi
+                    '''
+            }   
+        }    
+    }
+}
